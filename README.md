@@ -1,42 +1,54 @@
-# sv
+# Marco FIRE Tools
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Raccolta di calcolatori web gratuiti per la finanza personale italiana, compagni dei video YouTube del canale [Marco FIRE](https://www.youtube.com/@marcofire-it).
 
-## Creating a project
+🌐 **Live**: https://marcofire-it.github.io/marco-fire-tools/
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Tool disponibili
 
-```sh
-# create a new project
-npx sv create my-app
-```
+| Tool | Path | Stato | Video correlato |
+|---|---|---|---|
+| BTP Italia Sì Compare | [`/btp-si-compare/`](https://marcofire-it.github.io/marco-fire-tools/btp-si-compare/) | ✅ live | Emissione 15-19 giu 2026 |
+| FIRE Calculator | `/fire-calc/` | 🔄 in arrivo | — |
+| PIC vs PAC | `/pic-vs-pac/` | 🔄 in arrivo | — |
 
-To recreate this project with the same configuration:
+## Caratteristiche
 
-```sh
-# recreate this project
-npx sv@0.15.3 create --template minimal --types ts --install npm .
-```
+- 🔒 **Client-side**: i tuoi dati restano nel browser, zero backend, zero tracking
+- 📱 **Mobile-first**: funziona perfettamente da smartphone
+- 🆓 **Gratis e open source**: codice MIT su questo repo
+- 🔄 **Sempre aggiornato**: parametri sincronizzati col canale tramite pipeline automatica (single source of truth)
 
-## Developing
+## Stack
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- [SvelteKit](https://kit.svelte.dev/) 2.x + TypeScript + runes mode
+- [Tailwind CSS](https://tailwindcss.com/) v4
+- [`@sveltejs/adapter-static`](https://kit.svelte.dev/docs/adapter-static) + GitHub Pages
+- Niente backend, niente analytics, niente cookie
 
-```sh
-npm run dev
+## Sviluppo locale
 
-# or start the server and open the app in a new browser tab
+```bash
+npm install
 npm run dev -- --open
 ```
 
-## Building
+Build produzione (uguale a quella che gira su GitHub Pages):
 
-To create a production version of your app:
-
-```sh
+```bash
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Deploy
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Push su `main` → GitHub Actions builds + deploya in ~2 min. Vedi `.github/workflows/deploy.yml`.
+
+## Disclaimer
+
+I tool hanno finalità informative e divulgative. Non sono consulenza finanziaria.
+I valori di default vanno verificati con le fonti primarie (MEF, ISTAT, Banca d'Italia) prima di prendere decisioni di investimento.
+
+## Licenza
+
+MIT.
