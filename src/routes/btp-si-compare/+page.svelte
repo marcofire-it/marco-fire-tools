@@ -13,8 +13,10 @@
 		fmtEur
 	} from '$lib/finance/btp';
 
-	// State reattivo
-	let tassoFisso = $state(DEFAULT_PARAMS.si.tassoFissoReale);
+	// State reattivo. Tasso fisso digitato in % (es. 1.2 per 1,2%) per UX,
+	// internamente convertito a decimale (0.012).
+	let tassoFissoPct = $state(DEFAULT_PARAMS.si.tassoFissoReale * 100);
+	const tassoFisso = $derived(tassoFissoPct / 100);
 	let capitale = $state(DEFAULT_PARAMS.si.capitale);
 	let scenarioInfl = $state(DEFAULT_PARAMS.si.inflazione);
 	let prezzoMag28 = $state(DEFAULT_PARAMS.classico.mag28.prezzoMot);
@@ -112,7 +114,7 @@
 	<p class="text-slate-400">Simulatore di confronto per l'emissione del 15-19 giugno 2026.</p>
 	<div class="mt-4 p-4 bg-mfire-warn/20 border border-mfire-warn rounded-lg text-sm">
 		⚠️ <strong>Disclaimer</strong> — Strumento informativo, NON consulenza finanziaria.
-		Valori aggiornati al 28 maggio 2026. Tasso fisso reale del Sì è IPOTETICO (1,2%) finché il MEF non annuncia il valore vero il 12 giugno 2026.
+		Valori aggiornati al 12 giugno 2026, giorno dell'annuncio MEF del tasso fisso reale del Sì (1,2%). Collocamento 15-19 giugno 2026.
 	</div>
 </header>
 
@@ -123,8 +125,8 @@
 		<div>
 			<label class="label">
 				Tasso fisso reale Sì (annunciato MEF 12/06)
-				<input id="tasso-fisso" data-testid="tasso-fisso" type="number" step="0.001" min="0" max="0.05" bind:value={tassoFisso} class="input mt-1" />
-				<span class="text-xs text-slate-500">Default 1,2% (ipotesi)</span>
+				<input id="tasso-fisso" data-testid="tasso-fisso" type="number" step="0.1" min="0" max="5" bind:value={tassoFissoPct} class="input mt-1" />
+				<span class="text-xs text-slate-500">Es. 1,2 per 1,2% — annunciato MEF 12 giu 2026</span>
 			</label>
 		</div>
 		<div>
