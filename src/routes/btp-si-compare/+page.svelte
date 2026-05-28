@@ -123,20 +123,20 @@
 		<div>
 			<label class="label">
 				Tasso fisso reale Sì (annunciato MEF 12/06)
-				<input type="number" step="0.001" min="0" max="0.05" bind:value={tassoFisso} class="input mt-1" />
+				<input id="tasso-fisso" data-testid="tasso-fisso" type="number" step="0.001" min="0" max="0.05" bind:value={tassoFisso} class="input mt-1" />
 				<span class="text-xs text-slate-500">Default 1,2% (ipotesi)</span>
 			</label>
 		</div>
 		<div>
 			<label class="label">
 				Capitale investito (€)
-				<input type="number" step="1000" min="1000" bind:value={capitale} class="input mt-1" />
+				<input id="capitale" data-testid="capitale" type="number" step="1000" min="1000" bind:value={capitale} class="input mt-1" />
 			</label>
 		</div>
 		<div>
 			<label class="label">
 				Scenario inflazione FOI media
-				<select bind:value={scenarioInfl} class="input mt-1">
+				<select id="scenario-infl" data-testid="scenario-infl" bind:value={scenarioInfl} class="input mt-1">
 					<option value={0.01}>1,0% (disinflazione)</option>
 					<option value={0.02}>2,0% (base BCE)</option>
 					<option value={0.03}>3,0% (persistente)</option>
@@ -147,14 +147,14 @@
 		<div>
 			<label class="label">
 				Prezzo MOT BTP Italia mag 2028
-				<input type="number" step="0.1" min="80" max="120" bind:value={prezzoMag28} class="input mt-1" />
+				<input id="prezzo-mag28" data-testid="prezzo-mag28" type="number" step="0.1" min="80" max="120" bind:value={prezzoMag28} class="input mt-1" />
 				<span class="text-xs text-slate-500">100 = par; oggi ~104</span>
 			</label>
 		</div>
 		<div>
 			<label class="label">
 				Prezzo MOT BTP Italia giu 2030
-				<input type="number" step="0.1" min="80" max="120" bind:value={prezzoGiu30} class="input mt-1" />
+				<input id="prezzo-giu30" data-testid="prezzo-giu30" type="number" step="0.1" min="80" max="120" bind:value={prezzoGiu30} class="input mt-1" />
 				<span class="text-xs text-slate-500">Oggi ~102</span>
 			</label>
 		</div>
@@ -162,7 +162,7 @@
 </section>
 
 <!-- OUTPUT BTP Italia Sì -->
-<section class="card mb-8">
+<section id="output-si" data-testid="output-si" class="card mb-8">
 	<h2 class="text-xl font-bold mb-4">🟢 BTP Italia Sì — i tuoi numeri</h2>
 	<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
 		<div class="bg-slate-800 rounded-lg p-4">
@@ -214,7 +214,7 @@
 </section>
 
 <!-- MATRICE COMPARATIVA -->
-<section class="card mb-8">
+<section id="output-matrix" data-testid="output-matrix" class="card mb-8">
 	<h2 class="text-xl font-bold mb-2">📊 Matrice rendimento REALE netto annuo</h2>
 	<p class="text-sm text-slate-400 mb-4">Per i 5 strumenti × 4 scenari inflazione. Heatmap: verde = miglior rendimento per scenario, rosso = peggiore.</p>
 	<div class="overflow-x-auto">
