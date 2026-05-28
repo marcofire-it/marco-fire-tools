@@ -1,0 +1,67 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-mfire-primary: #1E40AF;
+	--color-mfire-accent: #10B981;
+	--color-mfire-warn: #F59E0B;
+	--color-mfire-danger: #EF4444;
+	--color-mfire-bg: #0F172A;
+	--color-mfire-surface: #1E293B;
+	--font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html {
+	font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+	background-color: #0F172A;
+	color: #f1f5f9;
+	-webkit-font-smoothing: antialiased;
+}
+
+.card {
+	background-color: #1E293B;
+	border-radius: 0.75rem;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+	padding: 1.5rem;
+	border: 1px solid #334155;
+}
+
+.btn {
+	padding: 0.5rem 1rem;
+	border-radius: 0.5rem;
+	font-weight: 600;
+	transition: background-color 0.2s;
+}
+
+.btn-primary {
+	background-color: #1E40AF;
+	color: white;
+}
+
+.btn-primary:hover {
+	background-color: #1d4ed8;
+}
+
+.input {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	border-radius: 0.5rem;
+	background-color: #1e293b;
+	border: 1px solid #475569;
+	color: #f1f5f9;
+}
+
+.input:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px #1E40AF;
+}
+
+.label {
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #cbd5e1;
+	margin-bottom: 0.25rem;
+}
