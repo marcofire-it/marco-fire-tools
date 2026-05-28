@@ -144,10 +144,9 @@ export function fmtEur(v: number, decimals = 0): string {
 	return v.toLocaleString('it-IT', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' €';
 }
 
-/**
- * Default values aggiornati ai dati MEF/MOT al 28 maggio 2026.
- * NB: tassoFissoReale è IPOTETICO (1,2%) finché MEF non annuncia il 12/06.
- */
+// >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
+// Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
+// last_synced: 2026-05-28T15:16:43+00:00  stato: placeholder
 export const DEFAULT_PARAMS = {
 	si: {
 		tassoFissoReale: 0.012,
@@ -160,12 +159,12 @@ export const DEFAULT_PARAMS = {
 	classico: {
 		mag28: {
 			tassoReale: 0.02,
-			prezzoMot: 104.0,
+			prezzoMot: 104,
 			anniResidui: 2
 		} satisfies BtpClassicoInputs,
 		giu30: {
 			tassoReale: 0.016,
-			prezzoMot: 102.0,
+			prezzoMot: 102,
 			anniResidui: 5
 		} satisfies BtpClassicoInputs
 	},
@@ -187,3 +186,4 @@ export const DEFAULT_PARAMS = {
 	},
 	scenariInflazione: [0.01, 0.02, 0.03, 0.045]
 };
+// <<< AUTO-GENERATED
