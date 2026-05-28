@@ -22,9 +22,16 @@ Pre-requisiti:
 from __future__ import annotations
 
 import argparse
+import io
 import subprocess
 import sys
 from pathlib import Path
+
+# Force utf-8 stdout su Windows (cp1252 non sa fare →)
+if hasattr(sys.stdout, "buffer"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "buffer"):
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STAGING_REMOTE = "origin"
