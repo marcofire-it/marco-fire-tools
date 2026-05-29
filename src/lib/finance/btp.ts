@@ -33,6 +33,21 @@ export interface BtpNominaleInputs {
 	tassazione: number;
 }
 
+export interface BtpMeta {
+	/** Stato: "placeholder" prima MEF day, "confermato" dopo annuncio */
+	stato: 'placeholder' | 'confermato' | string;
+	/** Data ufficiale annuncio MEF tasso fisso reale (ISO YYYY-MM-DD) */
+	dataAnnuncioMef: string;
+	/** Primo giorno collocamento BTP Italia Sì (ISO) */
+	dataEmissioneInizio: string;
+	/** Ultimo giorno collocamento BTP Italia Sì (ISO) */
+	dataEmissioneFine: string;
+	/** ISIN BTP Italia Sì (vuoto/TBD prima del collocamento) */
+	isinSi: string;
+	/** Ultima data sync JSON master (ISO) */
+	ultimoAggiornamento: string;
+}
+
 /**
  * BTP Italia Sì — IRR netto annuo (formula semplificata Excel)
  * = (tassoFissoReale + premio/durata) * (1 - tassazione)
@@ -146,8 +161,16 @@ export function fmtEur(v: number, decimals = 0): string {
 
 // >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
 // Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
-// last_synced: 2026-05-28T15:16:43+00:00  stato: placeholder
+// last_synced: 2026-05-29T16:54:26+00:00  stato: placeholder
 export const DEFAULT_PARAMS = {
+	_meta: {
+		stato: 'placeholder',
+		dataAnnuncioMef: '2026-06-12',
+		dataEmissioneInizio: '2026-06-15',
+		dataEmissioneFine: '2026-06-19',
+		isinSi: 'TBD',
+		ultimoAggiornamento: '2026-05-28'
+	} satisfies BtpMeta,
 	si: {
 		tassoFissoReale: 0.012,
 		premioFedelta: 0.006,
@@ -165,7 +188,7 @@ export const DEFAULT_PARAMS = {
 		giu30: {
 			tassoReale: 0.016,
 			prezzoMot: 102,
-			anniResidui: 5
+			anniResidui: 4
 		} satisfies BtpClassicoInputs
 	},
 	valore: {
