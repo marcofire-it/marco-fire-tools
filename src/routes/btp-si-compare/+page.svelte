@@ -233,7 +233,7 @@
 				<tr class="border-b border-slate-700">
 					<td class="py-2 px-3 font-semibold">🟢 BTP Italia Sì</td>
 					{#each matrice.si as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, scenari.map(s => [matrice.si[scenari.indexOf(s)], matrice.classico[scenari.indexOf(s)], matrice.valore[scenari.indexOf(s)], matrice.nom5y[scenari.indexOf(s)], matrice.nom10y[scenari.indexOf(s)]][i] !== undefined ? [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]][0] : 0).flat())}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 				<tr class="border-b border-slate-700">
