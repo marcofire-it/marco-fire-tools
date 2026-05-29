@@ -13,6 +13,28 @@
 		fmtEur
 	} from '$lib/finance/btp';
 
+	// Tassazione titoli di stato — single source da DEFAULT_PARAMS (sync via JSON master)
+	const TAX = DEFAULT_PARAMS.si.tassazione;
+	const META = DEFAULT_PARAMS._meta;
+
+	// Helper: formatta ISO date "2026-06-15" → "15 giugno 2026"
+	const MESI_IT = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+		'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+	function fmtDateIt(iso: string): string {
+		if (!iso || iso.length < 10) return iso;
+		const [y, m, d] = iso.split('-');
+		return `${parseInt(d)} ${MESI_IT[parseInt(m) - 1]} ${y}`;
+	}
+	// Formatta finestra collocamento "15-19 giugno 2026" (assume stesso mese/anno)
+	function fmtFinestra(isoStart: string, isoEnd: string): string {
+		if (!isoStart || !isoEnd) return '';
+		const [ys, ms, ds] = isoStart.split('-');
+		const [, , de] = isoEnd.split('-');
+		return `${parseInt(ds)}-${parseInt(de)} ${MESI_IT[parseInt(ms) - 1]} ${ys}`;
+	}
+	const finestraCollocamento = fmtFinestra(META.dataEmissioneInizio, META.dataEmissioneFine);
+	const dataAnnuncioMefIt = fmtDateIt(META.dataAnnuncioMef);
+
 	// State reattivo. Tasso fisso digitato in % (es. 1.2 per 1,2%) per UX,
 	// internamente convertito a decimale (0.012).
 	let tassoFissoPct = $state(DEFAULT_PARAMS.si.tassoFissoReale * 100);
@@ -32,7 +54,7 @@
 
 	// Calcoli BTP Italia Sì
 	const cedolaLordaAnnua = $derived(btpSiCedolaAnnuaLorda(siParams));
-	const cedolaNettaAnnua = $derived(cedolaLordaAnnua * (1 - 0.125));
+	const cedolaNettaAnnua = $derived(cedolaLordaAnnua * (1 - TAX));
 	const totNetto5y = $derived(btpSiTotNetto(siParams));
 	const irrSiRealeNetto = $derived(btpSiIrrRealeNetto(siParams));
 
@@ -40,7 +62,7 @@
 	const ytmMag28 = $derived(btpClassicoYtmReale({ ...DEFAULT_PARAMS.classico.mag28, prezzoMot: prezzoMag28 }));
 	const ytmGiu30 = $derived(btpClassicoYtmReale({ ...DEFAULT_PARAMS.classico.giu30, prezzoMot: prezzoGiu30 }));
 	const ytmMedio = $derived((ytmMag28 + ytmGiu30) / 2);
-	const irrClassicoNetto = $derived(ytmMedio * (1 - 0.125));
+	const irrClassicoNetto = $derived(ytmMedio * (1 - TAX));
 
 	// Matrice 5 strumenti × 4 scenari
 	const scenari = DEFAULT_PARAMS.scenariInflazione;
@@ -58,13 +80,13 @@
 			}
 			if (strumento === 'nom5y') {
 				return btpNominaleRealeNetto(
-					{ rendimentoLordo: DEFAULT_PARAMS.nominali['5y'], tassazione: 0.125 },
+					{ rendimentoLordo: DEFAULT_PARAMS.nominali['5y'], tassazione: TAX },
 					infl
 				);
 			}
 			if (strumento === 'nom10y') {
 				return btpNominaleRealeNetto(
-					{ rendimentoLordo: DEFAULT_PARAMS.nominali['10y'], tassazione: 0.125 },
+					{ rendimentoLordo: DEFAULT_PARAMS.nominali['10y'], tassazione: TAX },
 					infl
 				);
 			}
@@ -82,13 +104,13 @@
 
 	// Break-even per nominali
 	const breakEvenNom2y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['2y'] * (1 - 0.125))
+		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['2y'] * (1 - TAX))
 	);
 	const breakEvenNom5y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['5y'] * (1 - 0.125))
+		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['5y'] * (1 - TAX))
 	);
 	const breakEvenNom10y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['10y'] * (1 - 0.125))
+		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['10y'] * (1 - TAX))
 	);
 
 	// Heatmap helper: colore in base al valore (verde alto, rosso basso)
@@ -111,10 +133,14 @@
 
 <header class="mb-8">
 	<h1 class="text-3xl md:text-4xl font-bold mb-2">🟢 BTP Italia Sì Compare</h1>
-	<p class="text-slate-400">Simulatore di confronto per l'emissione del 15-19 giugno 2026.</p>
+	<p class="text-slate-400">Simulatore di confronto per l'emissione del {finestraCollocamento}.</p>
 	<div class="mt-4 p-4 bg-mfire-warn/20 border border-mfire-warn rounded-lg text-sm">
 		⚠️ <strong>Disclaimer</strong> — Strumento informativo, NON consulenza finanziaria.
-		Valori aggiornati al 12 giugno 2026, giorno dell'annuncio MEF del tasso fisso reale del Sì (1,2%). Collocamento 15-19 giugno 2026.
+		{#if META.stato === 'confermato'}
+			Valori aggiornati al {dataAnnuncioMefIt}, giorno dell'annuncio MEF del tasso fisso reale del Sì ({fmtPct(DEFAULT_PARAMS.si.tassoFissoReale, 1)}). Collocamento {finestraCollocamento}.
+		{:else}
+			Tasso fisso reale del Sì ({fmtPct(DEFAULT_PARAMS.si.tassoFissoReale, 1)}) è <strong>IPOTETICO</strong> finché il MEF non lo annuncia il {dataAnnuncioMefIt}. Collocamento {finestraCollocamento}.
+		{/if}
 	</div>
 </header>
 
@@ -175,12 +201,12 @@
 		<div class="bg-slate-800 rounded-lg p-4">
 			<div class="text-xs text-slate-400 uppercase">Cedola netta annua</div>
 			<div class="text-2xl font-bold mt-1">{fmtEur(cedolaNettaAnnua)}</div>
-			<div class="text-xs text-slate-500 mt-1">netta 12,5%</div>
+			<div class="text-xs text-slate-500 mt-1">netta {fmtPct(TAX, 1)}</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4">
-			<div class="text-xs text-slate-400 uppercase">Tot netto 5 anni</div>
+			<div class="text-xs text-slate-400 uppercase">Tot netto {DEFAULT_PARAMS.si.durata} anni</div>
 			<div class="text-2xl font-bold text-mfire-accent mt-1">{fmtEur(totNetto5y)}</div>
-			<div class="text-xs text-slate-500 mt-1">cedole + premio 0,6%</div>
+			<div class="text-xs text-slate-500 mt-1">cedole + premio {fmtPct(DEFAULT_PARAMS.si.premioFedelta, 1)}</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4">
 			<div class="text-xs text-slate-400 uppercase">IRR REALE netto annuo</div>
@@ -200,12 +226,12 @@
 		<div class="bg-slate-800 rounded-lg p-4">
 			<div class="text-xs text-slate-400 uppercase">Mag 2028 — YTM reale</div>
 			<div class="text-2xl font-bold mt-1">{fmtPct(ytmMag28)}</div>
-			<div class="text-xs text-slate-500 mt-1">cedola 2,0% → prezzo {prezzoMag28}</div>
+			<div class="text-xs text-slate-500 mt-1">cedola {fmtPct(DEFAULT_PARAMS.classico.mag28.tassoReale, 1)} → prezzo {prezzoMag28}</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4">
 			<div class="text-xs text-slate-400 uppercase">Giu 2030 — YTM reale</div>
 			<div class="text-2xl font-bold mt-1">{fmtPct(ytmGiu30)}</div>
-			<div class="text-xs text-slate-500 mt-1">cedola 1,6% → prezzo {prezzoGiu30}</div>
+			<div class="text-xs text-slate-500 mt-1">cedola {fmtPct(DEFAULT_PARAMS.classico.giu30.tassoReale, 1)} → prezzo {prezzoGiu30}</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4 border-2 border-mfire-accent">
 			<div class="text-xs text-slate-400 uppercase">Medio (matrice)</div>
@@ -273,19 +299,19 @@
 	</p>
 	<div class="grid md:grid-cols-3 gap-4">
 		<div class="bg-slate-800 rounded-lg p-4">
-			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 2y (2,20%)</div>
+			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 2y ({fmtPct(DEFAULT_PARAMS.nominali['2y'], 2)})</div>
 			<div class="text-2xl font-bold mt-1 {breakEvenNom2y <= 0 ? 'text-emerald-400' : ''}">
 				{breakEvenNom2y <= 0 ? '✓ vince sempre' : `> ${fmtPct(breakEvenNom2y, 1)}`}
 			</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4">
-			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 5y (2,90%)</div>
+			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 5y ({fmtPct(DEFAULT_PARAMS.nominali['5y'], 2)})</div>
 			<div class="text-2xl font-bold mt-1">
 				{breakEvenNom5y <= 0 ? '✓ vince sempre' : `> ${fmtPct(breakEvenNom5y, 1)}`}
 			</div>
 		</div>
 		<div class="bg-slate-800 rounded-lg p-4">
-			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 10y (3,45%)</div>
+			<div class="text-xs text-slate-400 uppercase">vs BTP nominale 10y ({fmtPct(DEFAULT_PARAMS.nominali['10y'], 2)})</div>
 			<div class="text-2xl font-bold mt-1">
 				{breakEvenNom10y <= 0 ? '✓ vince sempre' : `> ${fmtPct(breakEvenNom10y, 1)}`}
 			</div>
@@ -297,10 +323,10 @@
 <section class="card">
 	<h2 class="text-xl font-bold mb-4">📚 Fonti</h2>
 	<ul class="text-sm text-slate-300 space-y-1 list-disc list-inside">
-		<li>MEF Dipartimento del Tesoro — Annuncio BTP Italia Sì 15-19 giugno 2026</li>
+		<li>MEF Dipartimento del Tesoro — Annuncio BTP Italia Sì {finestraCollocamento}</li>
 		<li>MEF — Esempi calcolo BTP Italia Sì (formula C = (tasso/2) × cap + cap × (CI-1))</li>
-		<li>MEF — BTP Italia mag 2028 e giu 2030: prospetto tasso reale 2,0% e 1,6%</li>
-		<li>MEF — BTP Valore marzo 2026: step-up 2,60/2,80/3,80, premio 0,8%</li>
+		<li>MEF — BTP Italia mag 2028 e giu 2030: prospetto tasso reale {fmtPct(DEFAULT_PARAMS.classico.mag28.tassoReale, 1)} e {fmtPct(DEFAULT_PARAMS.classico.giu30.tassoReale, 1)}</li>
+		<li>MEF — BTP Valore marzo 2026: step-up {fmtPct(DEFAULT_PARAMS.valore.cedola1, 2)}/{fmtPct(DEFAULT_PARAMS.valore.cedola2, 2)}/{fmtPct(DEFAULT_PARAMS.valore.cedola3, 2)}, premio {fmtPct(DEFAULT_PARAMS.valore.premio, 1)}</li>
 		<li>Banca d'Italia — risultati aste BTP nominali maggio 2026 (curva 2y-10y)</li>
 		<li>Borsa Italiana MOT — prezzi correnti BTP retail (verifica reale prima di investire)</li>
 	</ul>
