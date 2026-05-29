@@ -1,0 +1,3 @@
+# Escludi script di management dalle statistiche Languages di GitHub
+# (vogliamo che la card del repo mostri solo Svelte/TS/CSS, lo stack reale del web)
+scripts/*.py linguist-vendored
