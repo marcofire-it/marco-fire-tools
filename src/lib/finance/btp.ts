@@ -163,7 +163,7 @@ export function fmtEur(v: number, decimals = 0): string {
 
 // >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
 // Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
-// last_synced: 2026-05-29T16:54:26+00:00  stato: placeholder
+// last_synced: 2026-06-10T17:50:24+00:00  stato: placeholder
 export const DEFAULT_PARAMS = {
 	_meta: {
 		stato: 'placeholder',
@@ -171,10 +171,10 @@ export const DEFAULT_PARAMS = {
 		dataEmissioneInizio: '2026-06-15',
 		dataEmissioneFine: '2026-06-19',
 		isinSi: 'TBD',
-		ultimoAggiornamento: '2026-05-28'
+		ultimoAggiornamento: '2026-06-10'
 	} satisfies BtpMeta,
 	si: {
-		tassoFissoReale: 0.012,
+		tassoFissoReale: 0.018,
 		premioFedelta: 0.006,
 		durata: 5,
 		tassazione: 0.125,
@@ -184,18 +184,18 @@ export const DEFAULT_PARAMS = {
 	classico: {
 		mag28: {
 			tassoReale: 0.02,
-			prezzoMot: 104,
-			anniResidui: 2
+			prezzoMot: 101.97,
+			anniResidui: 1.8
 		} satisfies BtpClassicoInputs,
 		giu30: {
 			tassoReale: 0.016,
-			prezzoMot: 102,
+			prezzoMot: 101.92,
 			anniResidui: 4
 		} satisfies BtpClassicoInputs
 	},
 	valore: {
 		cedola1: 0.026,
-		cedola2: 0.028,
+		cedola2: 0.032,
 		cedola3: 0.038,
 		premio: 0.008,
 		durata: 6,
