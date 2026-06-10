@@ -37,7 +37,8 @@
 
 	// State reattivo. Tasso fisso digitato in % (es. 1.2 per 1,2%) per UX,
 	// internamente convertito a decimale (0.012).
-	let tassoFissoPct = $state(DEFAULT_PARAMS.si.tassoFissoReale * 100);
+	// toFixed evita artefatti float di *100 nel campo (0.018*100 = 1.7999999999999998)
+	let tassoFissoPct = $state(Number((DEFAULT_PARAMS.si.tassoFissoReale * 100).toFixed(2)));
 	const tassoFisso = $derived(tassoFissoPct / 100);
 	let capitale = $state(DEFAULT_PARAMS.si.capitale);
 	let scenarioInfl = $state(DEFAULT_PARAMS.si.inflazione);
