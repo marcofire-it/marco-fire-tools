@@ -148,7 +148,7 @@
 			<label class="label">
 				Tasso fisso reale Sì (annunciato MEF 12/06)
 				<input id="tasso-fisso" data-testid="tasso-fisso" type="number" step="0.1" min="0" max="5" bind:value={tassoFissoPct} class="input mt-1" />
-				<span class="text-xs text-slate-500">Es. 1,2 per 1,2% — annunciato MEF 12 giu 2026</span>
+				<span class="text-xs text-slate-500">Es. {(DEFAULT_PARAMS.si.tassoFissoReale * 100).toLocaleString('it-IT')} per {fmtPct(DEFAULT_PARAMS.si.tassoFissoReale, 1)} — minimo garantito MEF 12 giu, definitivo a fine collocamento</span>
 			</label>
 		</div>
 		<div>
@@ -170,16 +170,16 @@
 		</div>
 		<div>
 			<label class="label">
-				Prezzo MOT BTP Italia mag 2028
+				Prezzo MOT BTP Italia mar 2028
 				<input id="prezzo-mag28" data-testid="prezzo-mag28" type="number" step="0.1" min="80" max="120" bind:value={prezzoMag28} class="input mt-1" />
-				<span class="text-xs text-slate-500">100 = par; oggi ~104</span>
+				<span class="text-xs text-slate-500">100 = par; oggi ~{DEFAULT_PARAMS.classico.mag28.prezzoMot.toLocaleString('it-IT')}</span>
 			</label>
 		</div>
 		<div>
 			<label class="label">
 				Prezzo MOT BTP Italia giu 2030
 				<input id="prezzo-giu30" data-testid="prezzo-giu30" type="number" step="0.1" min="80" max="120" bind:value={prezzoGiu30} class="input mt-1" />
-				<span class="text-xs text-slate-500">Oggi ~102</span>
+				<span class="text-xs text-slate-500">Oggi ~{DEFAULT_PARAMS.classico.giu30.prezzoMot.toLocaleString('it-IT')}</span>
 			</label>
 		</div>
 	</div>
@@ -220,7 +220,7 @@
 	</p>
 	<div class="grid md:grid-cols-3 gap-4">
 		<div class="bg-slate-800 rounded-lg p-4">
-			<div class="text-xs text-slate-400 uppercase">Mag 2028 — YTM reale</div>
+			<div class="text-xs text-slate-400 uppercase">Mar 2028 — YTM reale</div>
 			<div class="text-2xl font-bold mt-1">{fmtPct(ytmMag28)}</div>
 			<div class="text-xs text-slate-500 mt-1">cedola {fmtPct(DEFAULT_PARAMS.classico.mag28.tassoReale, 1)} → prezzo {prezzoMag28}</div>
 		</div>
@@ -321,7 +321,7 @@
 	<ul class="text-sm text-slate-300 space-y-1 list-disc list-inside">
 		<li>MEF Dipartimento del Tesoro — Annuncio BTP Italia Sì {finestraCollocamento}</li>
 		<li>MEF — Esempi calcolo BTP Italia Sì (formula C = (tasso/2) × cap + cap × (CI-1))</li>
-		<li>MEF — BTP Italia mag 2028 e giu 2030: prospetto tasso reale {fmtPct(DEFAULT_PARAMS.classico.mag28.tassoReale, 1)} e {fmtPct(DEFAULT_PARAMS.classico.giu30.tassoReale, 1)}</li>
+		<li>MEF — BTP Italia mar 2028 e giu 2030: prospetto tasso reale {fmtPct(DEFAULT_PARAMS.classico.mag28.tassoReale, 1)} e {fmtPct(DEFAULT_PARAMS.classico.giu30.tassoReale, 1)}</li>
 		<li>MEF — BTP Valore marzo 2026: step-up {fmtPct(DEFAULT_PARAMS.valore.cedola1, 2)}/{fmtPct(DEFAULT_PARAMS.valore.cedola2, 2)}/{fmtPct(DEFAULT_PARAMS.valore.cedola3, 2)}, premio {fmtPct(DEFAULT_PARAMS.valore.premio, 1)}</li>
 		<li>Banca d'Italia — risultati aste BTP nominali maggio 2026 (curva 2y-10y)</li>
 		<li>Borsa Italiana MOT — prezzi correnti BTP retail (verifica reale prima di investire)</li>

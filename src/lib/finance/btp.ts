@@ -4,7 +4,7 @@
  */
 
 export interface BtpSiInputs {
-	/** Tasso fisso reale annuo BTP Italia Sì (default 1,2% ipotetico — annunciato dal MEF 12/06) */
+	/** Tasso fisso reale annuo BTP Italia Sì (minimo garantito annunciato MEF 12/06; definitivo, solo al rialzo, a fine collocamento) */
 	tassoFissoReale: number;
 	/** Premio fedeltà finale (0,6% confermato MEF) */
 	premioFedelta: number;
