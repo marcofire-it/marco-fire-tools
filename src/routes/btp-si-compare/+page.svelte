@@ -70,10 +70,12 @@
 	function getMatrixRow(strumento: string): number[] {
 		return scenari.map((infl) => {
 			if (strumento === 'si') {
-				return irrSiRealeNetto; // costante per Sì
+				// fiscal drag: il reale netto dipende dallo scenario FOI
+				return btpSiIrrRealeNetto({ ...siParams, inflazione: infl });
 			}
 			if (strumento === 'classico') {
-				return irrClassicoNetto; // costante
+				// stesso drag del Sì: anche la rivalutazione FOI del classico è tassata
+				return irrClassicoNetto - TAX * infl;
 			}
 			if (strumento === 'valore') {
 				return btpValoreRealeNetto({ ...DEFAULT_PARAMS.valore, inflazione: infl });
@@ -102,16 +104,10 @@
 		nom10y: getMatrixRow('nom10y')
 	});
 
-	// Break-even per nominali
-	const breakEvenNom2y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['2y'] * (1 - TAX))
-	);
-	const breakEvenNom5y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['5y'] * (1 - TAX))
-	);
-	const breakEvenNom10y = $derived(
-		breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['10y'] * (1 - TAX))
-	);
+	// Break-even per nominali — soglia su rendimenti LORDI (le tasse si elidono)
+	const breakEvenNom2y = $derived(breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['2y']));
+	const breakEvenNom5y = $derived(breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['5y']));
+	const breakEvenNom10y = $derived(breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['10y']));
 
 	// Heatmap helper: colore in base al valore (verde alto, rosso basso)
 	function heatColor(value: number, allValues: number[]): string {
@@ -211,7 +207,7 @@
 		<div class="bg-slate-800 rounded-lg p-4">
 			<div class="text-xs text-slate-400 uppercase">IRR REALE netto annuo</div>
 			<div class="text-2xl font-bold mt-1">{fmtPct(irrSiRealeNetto)}</div>
-			<div class="text-xs text-slate-500 mt-1">costante in tutti scenari</div>
+			<div class="text-xs text-slate-500 mt-1">scenario FOI {fmtPct(scenarioInfl, 1)}</div>
 		</div>
 	</div>
 </section>

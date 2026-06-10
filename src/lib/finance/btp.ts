@@ -49,14 +49,14 @@ export interface BtpMeta {
 }
 
 /**
- * BTP Italia Sì — IRR netto annuo (formula semplificata Excel)
- * = (tassoFissoReale + premio/durata) * (1 - tassazione)
- * Nota: il rendimento REALE NETTO del Sì è costante (non dipende da inflazione)
- * grazie all'indicizzazione delle cedole.
+ * BTP Italia Sì — IRR REALE netto annuo per scenario inflazione (fiscal drag).
+ * Il 12,5% tassa ANCHE la componente FOI della cedola, quindi il reale netto
+ * NON è costante: reale = (tasso + premio/durata + FOI)*(1-tax) - FOI
+ *                       = (tasso + premio/durata)*(1-tax) - tax*FOI.
  */
 export function btpSiIrrRealeNetto(i: BtpSiInputs): number {
 	const premioAnnualizzato = i.premioFedelta / i.durata;
-	return (i.tassoFissoReale + premioAnnualizzato) * (1 - i.tassazione);
+	return (i.tassoFissoReale + premioAnnualizzato) * (1 - i.tassazione) - i.tassazione * i.inflazione;
 }
 
 /**
@@ -89,10 +89,12 @@ export function btpClassicoYtmReale(i: BtpClassicoInputs): number {
 }
 
 /**
- * BTP Italia classico — IRR reale netto annuo (YTM netto tasse).
+ * BTP Italia classico — IRR REALE netto annuo per scenario inflazione.
+ * Stesso fiscal drag del Sì (anche la rivalutazione FOI del classico è tassata):
+ * reale netto = YTM*(1-tax) - tax*FOI.
  */
-export function btpClassicoIrrRealeNetto(i: BtpClassicoInputs, tassazione: number): number {
-	return btpClassicoYtmReale(i) * (1 - tassazione);
+export function btpClassicoIrrRealeNetto(i: BtpClassicoInputs, tassazione: number, inflazione = 0): number {
+	return btpClassicoYtmReale(i) * (1 - tassazione) - tassazione * inflazione;
 }
 
 /**
@@ -135,14 +137,14 @@ export function btpNominaleRealeNetto(i: BtpNominaleInputs, inflazione: number):
  * Break-even inflazione: a quale inflazione FOI il BTP Italia Sì
  * raggiunge il rendimento netto del nominale (a cedola fissa).
  *
- * Formula: soglia = rendimento_netto_avversario - (tasso_reale_Si + premio/durata) * (1-tassazione)
+ * Le tasse si ELIDONO: ((tasso_si + FOI_BE) + premio/durata)*(1-tax) = nom_LORDO*(1-tax)
+ * → FOI_BE = nom_LORDO - tasso_si - premio/durata (soglia su rendimenti LORDI).
  */
 export function breakEvenInflazione(
 	si: BtpSiInputs,
-	avversarioNetto: number
+	avversarioLordo: number
 ): number {
-	const siNettoAnnuo = (si.tassoFissoReale + si.premioFedelta / si.durata) * (1 - si.tassazione);
-	return avversarioNetto - siNettoAnnuo;
+	return avversarioLordo - si.tassoFissoReale - si.premioFedelta / si.durata;
 }
 
 /**
