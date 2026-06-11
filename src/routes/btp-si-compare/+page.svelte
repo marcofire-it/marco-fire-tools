@@ -105,6 +105,28 @@
 		nom10y: getMatrixRow('nom10y')
 	});
 
+	// Flusso cedolare semestrale: cedola sem lorda = (fisso + FOI)/2 × capitale (convenzione lineare)
+	const CASHFLOW_DATES = ['dic 2026', 'giu 2027', 'dic 2027', 'giu 2028', 'dic 2028',
+		'giu 2029', 'dic 2029', 'giu 2030', 'dic 2030', 'giu 2031'];
+	const cashflowRows = $derived.by(() => {
+		const lordaSem = ((tassoFisso + scenarioInfl) / 2) * capitale;
+		let cum = 0;
+		const rows = CASHFLOW_DATES.map((label) => {
+			const imposta = lordaSem * TAX;
+			const netta = lordaSem - imposta;
+			cum += netta;
+			return { kind: 'cedola', label, lorda: lordaSem, imposta, netta, cumulato: cum };
+		});
+		const premioLordo = capitale * DEFAULT_PARAMS.si.premioFedelta;
+		const premioImposta = premioLordo * TAX;
+		const premioNetto = premioLordo - premioImposta;
+		cum += premioNetto;
+		rows.push({ kind: 'premio', label: 'giu 2031', lorda: premioLordo,
+			imposta: premioImposta, netta: premioNetto, cumulato: cum });
+		return rows;
+	});
+	const cashflowTotale = $derived(cashflowRows[cashflowRows.length - 1].cumulato);
+
 	// Break-even per nominali — soglia su rendimenti LORDI (le tasse si elidono)
 	const breakEvenNom2y = $derived(breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['2y']));
 	const breakEvenNom5y = $derived(breakEvenInflazione(siParams, DEFAULT_PARAMS.nominali['5y']));
@@ -210,6 +232,45 @@
 			<div class="text-2xl font-bold mt-1">{fmtPct(irrSiRealeNetto)}</div>
 			<div class="text-xs text-slate-500 mt-1">scenario FOI {fmtPct(scenarioInfl, 1)}</div>
 		</div>
+	</div>
+</section>
+
+<!-- Flusso cedolare semestrale -->
+<section id="output-cashflow" data-testid="output-cashflow" class="card mb-8">
+	<h2 class="text-xl font-bold mb-2">📅 Flusso cedolare — quanto incassi, quando</h2>
+	<p class="text-sm text-slate-400 mb-4">
+		Cedole semestrali nette con FOI media {fmtPct(scenarioInfl, 1)} costante (convenzione lineare:
+		le cedole effettive varieranno semestre per semestre con il FOI ISTAT). Premio fedeltà a scadenza.
+	</p>
+	<div class="overflow-x-auto">
+		<table class="w-full text-sm">
+			<thead>
+				<tr class="text-left text-slate-400 border-b border-slate-700">
+					<th class="py-2 pr-3">Stacco</th>
+					<th class="py-2 pr-3">Data</th>
+					<th class="py-2 pr-3 text-right">Cedola lorda</th>
+					<th class="py-2 pr-3 text-right">Imposta {fmtPct(TAX, 1)}</th>
+					<th class="py-2 pr-3 text-right">Netta</th>
+					<th class="py-2 text-right">Cumulato netto</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each cashflowRows as row, i}
+					<tr class="border-b border-slate-800 {row.kind === 'premio' ? 'text-mfire-accent font-semibold' : ''}">
+						<td class="py-1.5 pr-3">{row.kind === 'premio' ? 'Premio' : `${i + 1}/10`}</td>
+						<td class="py-1.5 pr-3">{row.label}</td>
+						<td class="py-1.5 pr-3 text-right">{fmtEur(row.lorda)}</td>
+						<td class="py-1.5 pr-3 text-right">−{fmtEur(row.imposta)}</td>
+						<td class="py-1.5 pr-3 text-right">{fmtEur(row.netta)}</td>
+						<td class="py-1.5 text-right">{fmtEur(row.cumulato)}</td>
+					</tr>
+				{/each}
+				<tr class="font-bold text-mfire-accent">
+					<td class="py-2 pr-3" colspan="5">TOTALE NETTO {DEFAULT_PARAMS.si.durata} ANNI (cedole + premio)</td>
+					<td class="py-2 text-right text-lg">{fmtEur(cashflowTotale)}</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </section>
 
