@@ -248,7 +248,7 @@ export function fmtEur(v: number, decimals = 0): string {
 
 // >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
 // Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
-// last_synced: 2026-06-12T12:01:20+00:00  stato: confermato
+// last_synced: 2026-06-12T12:08:27+00:00  stato: confermato
 export const DEFAULT_PARAMS = {
 	_meta: {
 		stato: 'confermato',
