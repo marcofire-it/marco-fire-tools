@@ -106,8 +106,8 @@
 	});
 
 	// Flusso cedolare semestrale: cedola sem lorda = (fisso + FOI)/2 × capitale (convenzione lineare)
-	const CASHFLOW_DATES = ['dic 2026', 'giu 2027', 'dic 2027', 'giu 2028', 'dic 2028',
-		'giu 2029', 'dic 2029', 'giu 2030', 'dic 2030', 'giu 2031'];
+	const CASHFLOW_DATES = ['23 dic 2026', '23 giu 2027', '23 dic 2027', '23 giu 2028', '23 dic 2028',
+		'23 giu 2029', '23 dic 2029', '23 giu 2030', '23 dic 2030', '23 giu 2031'];
 	const cashflowRows = $derived.by(() => {
 		const lordaSem = ((tassoFisso + scenarioInfl) / 2) * capitale;
 		let cum = 0;
@@ -160,6 +160,12 @@
 		{:else}
 			Tasso fisso reale del Sì ({fmtPct(DEFAULT_PARAMS.si.tassoFissoReale, 1)}) è <strong>IPOTETICO</strong> finché il MEF non lo annuncia il {dataAnnuncioMefIt}. Collocamento {finestraCollocamento}.
 		{/if}
+	</div>
+	<div class="mt-3 p-4 bg-red-900/30 border border-red-500 rounded-lg text-sm">
+		⏰ <strong>Attenzione ai tempi</strong> — Il collocamento (15–19 giugno) può chiudere
+		<strong>in anticipo</strong> già da mercoledì 17/6; venerdì 19/6 chiude comunque alle
+		<strong>13:00</strong>. L'ordine, una volta immesso, è <strong>irrevocabile</strong>.
+		ISIN: <strong>IT0005713539</strong>.
 	</div>
 </header>
 
@@ -272,6 +278,14 @@
 			</tbody>
 		</table>
 	</div>
+	<p class="text-xs text-slate-500 mt-3">
+		Nota metodologica: il titolo reale usa l'indice FOI ex tabacchi ISTAT interpolato giorno per
+		giorno con ~3 mesi di ritardo (la cedola di dic 2026 dipende dai FOI di set/ott 2026), con
+		Coefficiente di Inflazione troncato alla 6ª e arrotondato alla 5ª cifra decimale. Questo
+		simulatore usa la convenzione semplificata a FOI media costante: differenze di pochi
+		centesimi per cedola. Addebito sottoscrizione il 23/6/2026 (godimento = regolamento,
+		nessun dietimo).
+	</p>
 </section>
 
 <!-- BTP Italia classico - YTM secondario -->
