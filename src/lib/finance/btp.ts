@@ -163,18 +163,18 @@ export function fmtEur(v: number, decimals = 0): string {
 
 // >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
 // Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
-// last_synced: 2026-06-11T13:13:20+00:00  stato: placeholder
+// last_synced: 2026-06-12T11:00:45+00:00  stato: confermato
 export const DEFAULT_PARAMS = {
 	_meta: {
-		stato: 'placeholder',
+		stato: 'confermato',
 		dataAnnuncioMef: '2026-06-12',
 		dataEmissioneInizio: '2026-06-15',
 		dataEmissioneFine: '2026-06-19',
-		isinSi: 'TBD',
-		ultimoAggiornamento: '2026-06-10'
+		isinSi: 'IT0005713539',
+		ultimoAggiornamento: '2026-06-12'
 	} satisfies BtpMeta,
 	si: {
-		tassoFissoReale: 0.018,
+		tassoFissoReale: 0.016,
 		premioFedelta: 0.006,
 		durata: 5,
 		tassazione: 0.125,
@@ -184,12 +184,12 @@ export const DEFAULT_PARAMS = {
 	classico: {
 		mag28: {
 			tassoReale: 0.02,
-			prezzoMot: 101.97,
+			prezzoMot: 101.83,
 			anniResidui: 1.8
 		} satisfies BtpClassicoInputs,
 		giu30: {
 			tassoReale: 0.016,
-			prezzoMot: 101.92,
+			prezzoMot: 101.86,
 			anniResidui: 4
 		} satisfies BtpClassicoInputs
 	},
@@ -203,11 +203,11 @@ export const DEFAULT_PARAMS = {
 		inflazione: 0.02
 	} satisfies BtpValoreInputs,
 	nominali: {
-		'2y': 0.022,
-		'3y': 0.024,
-		'5y': 0.029,
-		'7y': 0.0315,
-		'10y': 0.0345
+		'2y': 0.028,
+		'3y': 0.029,
+		'5y': 0.0313,
+		'7y': 0.0344,
+		'10y': 0.0374
 	},
 	scenariInflazione: [0.01, 0.02, 0.03, 0.045]
 };
