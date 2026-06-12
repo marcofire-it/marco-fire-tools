@@ -4,11 +4,11 @@
 		btpSiCedolaAnnuaLorda,
 		btpSiTotNetto,
 		btpSiIrrRealeNetto,
-		btpClassicoYtmReale,
-		btpClassicoIrrRealeNetto,
-		btpValoreRealeNetto,
 		btpNominaleRealeNetto,
 		breakEvenInflazione,
+		ytmEsattoClassico,
+		ytmEsattoValore,
+		ytmEsattoFutura,
 		fmtPct,
 		fmtEur
 	} from '$lib/finance/btp';
@@ -44,6 +44,10 @@
 	let scenarioInfl = $state(DEFAULT_PARAMS.si.inflazione);
 	let prezzoMag28 = $state(DEFAULT_PARAMS.classico.mag28.prezzoMot);
 	let prezzoGiu30 = $state(DEFAULT_PARAMS.classico.giu30.prezzoMot);
+	let prezzoValore = $state(DEFAULT_PARAMS.valore.prezzoMot);
+	let prezzoFutura = $state(DEFAULT_PARAMS.futura.prezzoMot);
+	// as-of per i cashflow datati: data dell'ultimo aggiornamento prezzi del master
+	const AS_OF = META.ultimoAggiornamento;
 
 	// Derived: parametri Sì correnti
 	const siParams = $derived({
@@ -59,11 +63,14 @@
 	const totNetto5y = $derived(btpSiTotNetto(siParams));
 	const irrSiRealeNetto = $derived(btpSiIrrRealeNetto(siParams));
 
-	// Calcoli BTP Italia classico
-	const ytmMag28 = $derived(btpClassicoYtmReale({ ...DEFAULT_PARAMS.classico.mag28, prezzoMot: prezzoMag28 }));
-	const ytmGiu30 = $derived(btpClassicoYtmReale({ ...DEFAULT_PARAMS.classico.giu30, prezzoMot: prezzoGiu30 }));
+	// Calcoli BTP Italia classico — IRR ESATTO da cashflow datati (come video/Excel)
+	const ytmMag28 = $derived(ytmEsattoClassico('mag28', prezzoMag28, DEFAULT_PARAMS.classico.mag28.tassoReale, AS_OF));
+	const ytmGiu30 = $derived(ytmEsattoClassico('giu30', prezzoGiu30, DEFAULT_PARAMS.classico.giu30.tassoReale, AS_OF));
 	const ytmMedio = $derived((ytmMag28 + ytmGiu30) / 2);
 	const irrClassicoNetto = $derived(ytmMedio * (1 - TAX));
+	// Valore e Futura — YTM nominale lordo esatto dal prezzo MOT
+	const ytmValoreLordo = $derived(ytmEsattoValore(prezzoValore, DEFAULT_PARAMS.valore, AS_OF));
+	const ytmFuturaLordo = $derived(ytmEsattoFutura(prezzoFutura, DEFAULT_PARAMS.futura, AS_OF));
 
 	// Matrice 5 strumenti × 4 scenari
 	const scenari = DEFAULT_PARAMS.scenariInflazione;
@@ -79,7 +86,11 @@
 				return irrClassicoNetto - TAX * infl;
 			}
 			if (strumento === 'valore') {
-				return btpValoreRealeNetto({ ...DEFAULT_PARAMS.valore, inflazione: infl });
+				// YTM esatto dal prezzo MOT, lineare: netto - inflazione
+				return ytmValoreLordo * (1 - TAX) - infl;
+			}
+			if (strumento === 'futura') {
+				return ytmFuturaLordo * (1 - TAX) - infl;
 			}
 			if (strumento === 'nom5y') {
 				return btpNominaleRealeNetto(
@@ -101,6 +112,7 @@
 		si: getMatrixRow('si'),
 		classico: getMatrixRow('classico'),
 		valore: getMatrixRow('valore'),
+		futura: getMatrixRow('futura'),
 		nom5y: getMatrixRow('nom5y'),
 		nom10y: getMatrixRow('nom10y')
 	});
@@ -331,31 +343,37 @@
 				<tr class="border-b border-slate-700">
 					<td class="py-2 px-3 font-semibold">🟢 BTP Italia Sì</td>
 					{#each matrice.si as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 				<tr class="border-b border-slate-700">
 					<td class="py-2 px-3 font-semibold">🔵 BTP Italia classico (YTM MOT)</td>
 					{#each matrice.classico as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 				<tr class="border-b border-slate-700">
 					<td class="py-2 px-3 font-semibold">🟡 BTP Valore</td>
 					{#each matrice.valore as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+					{/each}
+				</tr>
+				<tr class="border-b border-slate-700">
+					<td class="py-2 px-3 font-semibold">🟣 BTP Futura</td>
+					{#each matrice.futura as v, i}
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 				<tr class="border-b border-slate-700">
 					<td class="py-2 px-3 font-semibold">🔴 BTP nominale 5y</td>
 					{#each matrice.nom5y as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 				<tr>
 					<td class="py-2 px-3 font-semibold">🟣 BTP nominale 10y</td>
 					{#each matrice.nom10y as v, i}
-						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
+						<td class="text-right py-2 px-3 {heatColor(v, [matrice.si[i], matrice.classico[i], matrice.valore[i], matrice.futura[i], matrice.nom5y[i], matrice.nom10y[i]])}">{fmtPct(v)}</td>
 					{/each}
 				</tr>
 			</tbody>
