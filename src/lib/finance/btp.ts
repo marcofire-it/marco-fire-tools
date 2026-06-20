@@ -248,7 +248,7 @@ export function fmtEur(v: number, decimals = 0): string {
 
 // >>> AUTO-GENERATED FROM virtual_influencer/shared/btp_params/btp_si_2026_06.json
 // Do NOT edit by hand. Run `python virtual_influencer/tools/sync_btp_params.py` to update.
-// last_synced: 2026-06-12T12:13:09+00:00  stato: confermato
+// last_synced: 2026-06-20T15:50:53+00:00  stato: confermato
 export const DEFAULT_PARAMS = {
 	_meta: {
 		stato: 'confermato',
@@ -269,12 +269,12 @@ export const DEFAULT_PARAMS = {
 	classico: {
 		mag28: {
 			tassoReale: 0.02,
-			prezzoMot: 101.83,
+			prezzoMot: 101.32,
 			anniResidui: 1.8
 		} satisfies BtpClassicoInputs,
 		giu30: {
 			tassoReale: 0.016,
-			prezzoMot: 101.86,
+			prezzoMot: 100.94,
 			anniResidui: 4
 		} satisfies BtpClassicoInputs
 	},
