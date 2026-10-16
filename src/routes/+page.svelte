@@ -3,11 +3,19 @@
 
 	const tools = [
 		{
+			slug: 'btp-valore-ottobre-2026',
+			emoji: '🟡',
+			title: 'BTP Valore e Valore Insieme (ottobre 2026)',
+			desc: 'Rendimento effettivo, cedole nette, bollo, verdetto rosso/giallo/verde e prezzo se vendi prima, sui tassi minimi MEF del 16/10. Collocamento 19-23 ottobre 2026.',
+			tag: '🔥 Nuovo',
+			ready: true
+		},
+		{
 			slug: 'btp-si-compare',
 			emoji: '🟢',
 			title: 'BTP Italia Sì Compare',
 			desc: "Confronta il nuovo BTP Italia Sì (emissione 15-19 giu 2026) con BTP Italia classico, BTP Valore, BTP Futura e BTP nominali. Calcola YTM secondario dal prezzo MOT corrente.",
-			tag: '🔥 Nuovo',
+			tag: 'Giugno 2026',
 			ready: true
 		},
 		{
