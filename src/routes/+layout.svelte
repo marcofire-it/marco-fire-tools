@@ -14,6 +14,7 @@
 			<a href="{base}/" class="text-xl font-bold text-mfire-accent">🔥 Marco FIRE Tools</a>
 			<div class="flex gap-6 text-sm">
 				<a href="{base}/" class="hover:text-mfire-accent">Tutti i tool</a>
+				<a href="{base}/btp-valore-ottobre-2026" class="hover:text-mfire-accent">BTP Valore</a>
 				<a href="{base}/btp-si-compare" class="hover:text-mfire-accent">BTP Italia Sì</a>
 				<a href="{base}/about" class="hover:text-mfire-accent">About</a>
 			</div>

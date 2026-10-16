@@ -114,5 +114,8 @@ export function fmtPct(v: number, d = 2): string {
 	return (v * 100).toFixed(d).replace('.', ',') + '%';
 }
 export function fmtEur(v: number, d = 0): string {
-	return v.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' €';
+	// raggruppa anche le migliaia a 4 cifre (it-IT di default scrive «1776»)
+	const [int, dec] = Math.abs(v).toFixed(d).split('.');
+	const g = int.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+	return (v < 0 ? '−' : '') + g + (dec ? ',' + dec : '') + ' €';
 }

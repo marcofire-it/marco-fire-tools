@@ -71,7 +71,7 @@
 		GIALLO: 'bg-amber-700/30 text-amber-200 border-amber-500',
 		ROSSO: 'bg-rose-700/30 text-rose-300 border-rose-500'
 	};
-	const fmtPb = (v: number) => (v >= 0 ? '+' : '−') + Math.abs(v * 100).toFixed(0) + ' pb';
+	const fmtPb = (v: number) => (v >= 0 ? '+' : '−') + Math.abs(v * 10000).toFixed(0) + ' pb';
 	const fmtN = (v: number) => v.toFixed(2).replace('.', ',');
 </script>
 
